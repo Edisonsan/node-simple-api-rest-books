@@ -7,20 +7,22 @@ const db = mongoose.connect('mongodb://localhost/bookAPI', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
-const bookRouter = express.Router();
+const transactionRouter = express.Router();
 const port = process.env.PORT || 3000;
-const Book = require('./models/bookModel');
+const Transaction = require('./models/transactionModel');
+const MonCash = require('./moncash');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-bookRouter
-  .route('/books')
+transactionRouter
+  .route('/transactions')
   .post((req, res) => {
-    const book = new Book(req.body);
+    const transaction = new Transaction(req.body);
 
-    console.log(book);
-    return res.json(book);
+    MonCash.getPayment();
+
+    return res.json(transaction);
   })
   .get((req, res) => {
     // const { query } = req; //Exact condition query.
@@ -30,7 +32,7 @@ bookRouter
       query.genre = req.query.genre;
     }
 
-    Book.find(query, (err, books) => {
+    Transaction.find(query, (err, books) => {
       if (err) {
         res.send(err);
       }
@@ -39,17 +41,17 @@ bookRouter
     });
   });
 
-bookRouter.route('/books/:bookId').get((req, res) => {
-  Book.findById(req.params.bookId, (err, book) => {
+transactionRouter.route('/transactions/:transactionId').get((req, res) => {
+  Transaction.findById(req.params.bookId, (err, transaction) => {
     if (err) {
       res.send(err);
     }
 
-    res.json(book);
+    res.json(transaction);
   });
 });
 
-app.use('/api', bookRouter);
+app.use('/api', transactionRouter);
 
 app.get('/', (req, rest) => {
   rest.send('Welcome to my NodeMon API!');

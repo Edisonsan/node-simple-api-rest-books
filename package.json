@@ -14,6 +14,7 @@
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
     "mongoose": "^5.10.4",
+    "nodejs-moncash-sdk": "git+https://github.com/ecelestin/ecelestin-Moncash-sdk-nodejs.git",
     "nodemon": "^2.0.4"
   },
   "devDependencies": {
