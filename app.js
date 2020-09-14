@@ -1,12 +1,13 @@
+/* eslint-disable no-console */
 const express = require('express');
-const mongoose = require('mongoose');
+// const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
 const app = express();
-const db = mongoose.connect('mongodb://localhost/bookAPI', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+// const db = mongoose.connect('mongodb://localhost/bookAPI', {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true,
+// });
 const transactionRouter = express.Router();
 const port = process.env.PORT || 3000;
 const Transaction = require('./models/transactionModel');
@@ -17,10 +18,13 @@ app.use(bodyParser.json());
 
 transactionRouter
   .route('/transactions')
-  .post((req, res) => {
+  .post(async (req, res) => {
+    // console.log('req', req);
     const transaction = new Transaction(req.body);
 
-    MonCash.getPayment();
+    const valRsp = await MonCash.makePayment(50, '1111');
+
+    console.log('valRsp', valRsp);
 
     return res.json(transaction);
   })
@@ -40,16 +44,6 @@ transactionRouter
       res.json(books);
     });
   });
-
-transactionRouter.route('/transactions/:transactionId').get((req, res) => {
-  Transaction.findById(req.params.bookId, (err, transaction) => {
-    if (err) {
-      res.send(err);
-    }
-
-    res.json(transaction);
-  });
-});
 
 app.use('/api', transactionRouter);
 

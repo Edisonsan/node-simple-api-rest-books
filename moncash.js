@@ -1,45 +1,56 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable no-console */
 let moncash = require('nodejs-moncash-sdk');
 
-const createPaymentJSON = {
-  amount: 50,
-  orderId: '123445564454542123',
-};
+// Sandbox Bolet Ideal
+// Client Id: dd0932fe75bc2febbe847048934f96ee
+// Client Secret: 8AuRKzyOhwSYiiJYy8G3qkxAfJM3Lh3iZzUKMcxbVhAREPbrfDgOnPubzNQ6IeJw
+
+// Documentation Credentials
+// client_id: 'c1bf0a27d6bbb217a599c9e25480c11d',
+// client_secret:
+//   'oHrr4tbnB1PH0uz6VQNUvVVDNVNvk0WiIXZWBAed4-CBCwilT8yUdS87AZoPrtqN',
 
 moncash.configure({
   mode: 'sandbox', // sandbox or live
-  client_id: 'c1bf0a27d6bbb217a599c9e25480c11d',
+  client_id: 'dd0932fe75bc2febbe847048934f96ee',
   client_secret:
-    'oHrr4tbnB1PH0uz6VQNUvVVDNVNvk0WiIXZWBAed4-CBCwilT8yUdS87AZoPrtqN',
+    '8AuRKzyOhwSYiiJYy8G3qkxAfJM3Lh3iZzUKMcxbVhAREPbrfDgOnPubzNQ6IeJw',
 });
 
-const paymentCreator = moncash.payment;
+// // Get Payment by Order_id
+// moncash.capture.getByOrderId('1555952605', (error, capture) => {
+//   if (error) {
+//     console.error(error);
+//   } else {
+//     console.log(capture);
+//   }
+// });
 
-paymentCreator.create(createPaymentJSON, (error, payment) => {
-  if (error) {
-    console.log(error);
-    return error;
-  }
+exports.makePayment = async (amount, orderId) => {
+  const paymentCreator = moncash.payment;
 
-  return paymentCreator.redirect_uri(payment);
-});
+  const createPaymentJSON = {
+    amount,
+    orderId,
+  };
+  console.log('Create a payment');
 
-// Get payment by Transaction_id
-moncash.capture.getByTransactionId('1555945998145', (error, capture) => {
-  if (error) {
-    console.error(error);
-  }
-  console.log(capture);
-});
-// Get Payment by Order_id
-moncash.capture.getByOrderId('1555952605', (error, capture) => {
-  if (error) {
-    console.error(error);
-  } else {
-    console.log(capture);
-  }
-});
+  await paymentCreator.create(createPaymentJSON, async (error, payment) => {
+    if (error) {
+      console.log(error);
+      return error;
+    }
 
-exports.getPayment = paymentCreator;
+    console.log(payment);
+
+    const _url = await paymentCreator.redirect_uri(payment);
+
+    console.log(_url);
+
+    return _url;
+  });
+};
+
 exports.getByTransactionId = moncash.capture.getByTransactionId;
 exports.getByOrderId = moncash.capture.getByOrderId;
