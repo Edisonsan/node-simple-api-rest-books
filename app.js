@@ -22,7 +22,10 @@ transactionRouter
     // console.log('req', req);
     const transaction = new Transaction(req.body);
 
-    const valRsp = await MonCash.makePayment(50, '1111');
+    const date = new Date();
+    const timestamp = date.getTime().toString();
+
+    const valRsp = await MonCash.makePayment(50, timestamp);
 
     console.log('valRsp', valRsp);
 
